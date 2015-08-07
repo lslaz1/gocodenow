@@ -1,0 +1,187 @@
+<html>
+  <head>
+<script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+<script>
+
+var celsius = true;
+
+function draw_text(context,text,x,y) 
+{
+    context.font = 'normal 18pt Courier New';
+
+   context.fillStyle = "black";
+   context.fillText(text, x, y);
+
+}
+
+function day_text(context,text,x,y) 
+{
+    context.font = 'normal 28pt Courier New';
+
+   context.fillStyle = "black";
+   context.fillText(text, x, y);
+
+}
+
+function temp_text(context,text,x,y) 
+{
+    context.font = 'normal 18pt Courier New';
+
+   context.fillStyle = "#E2DDB5";
+   context.fillText(text, x, y);
+
+}
+
+function draw_rect_high(context,x,y,width,height)
+{
+    context.fillStyle = "#B28647";
+    context.fillRect(x, y, width, height);
+
+}
+
+function draw_rect_low(context,x,y,width,height)
+{
+    context.fillStyle = "#5C3317";
+    context.fillRect(x, y, width, height);
+
+}
+
+
+function init()
+{
+
+    //http://www.html5canvastutorials.com/
+    var canvas = document.getElementById('weather_canvas');
+    var context = canvas.getContext('2d');
+
+
+    // draw_text(context,"A Visual Representation of Your Weather with Rectangles!",10,100);
+
+
+    // canvas.addEventListener("mousedown", on_click());
+
+   // canvas.addEventListener("mousedown", false);
+}
+
+</script>
+
+
+<script type="text/javascript">
+
+
+var forecast_url_base = "http://api.openweathermap.org/data/2.5/forecast/daily?mode=json&units=imperial";
+
+
+
+function get_weather_data(url,callback_function)
+{
+
+    $.ajax({
+  url: url,
+  success : callback_function,
+        error: function () { alert("Error Fetching Data")}});
+}
+
+function process_weather_data(data)
+{
+    console.log("Process Weather Data");
+    var canvas = document.getElementById('weather_canvas');
+    var context = canvas.getContext('2d');
+    var table = document.getElementById('results_div');
+    // var table_html = "<table style='width:100%'><tr><td>Day</td><td>High</td><td>Low</td><td>Description</td></tr>"
+    var city = data.city['name']
+    console.log(city)
+
+    //if celsius then nothing
+    //else
+    //celsius = !celsius;
+    draw_text(context,"A Visual Representation of Your Weather with Rectangles!",10,100);
+    var list = data.list;
+    var day = 0;
+    var x = 125
+    for (obj in list) {
+      day++;
+      var days = list[obj];
+      var temp = days['temp'];
+      var tempmax = temp['max'];
+      var tempmin = temp['min'];
+      console.log(tempmax,tempmin);
+      var weather = days['weather']['0'];
+      var description = weather['description'];
+      console.log(description);
+      // table_html += "<tr><td>"+day+"</td><td>"+tempmax+"</td><td>"+tempmin+"</td><td>"+description+"</td></tr>"
+      day_text(context, city,10,50)
+      day_text(context, "Day"+day,x+5,355)
+      draw_rect_high(context,x,320,100,2*(tempmax * -1));
+      temp_text(context, tempmax,x+15,315)
+      draw_rect_low(context,x,365,100,2*(tempmin));
+      temp_text(context, tempmin,x+15,390)
+      x += 110
+      
+    }
+
+    // table_html += "</table>"
+    // table.innerHTML += table_html;
+    
+
+}
+
+
+function get_inputs_then_fetch()
+{
+
+    var city = document.getElementById('city');
+    var city_value = city.value;
+
+    if (city_value.length == 0) {
+      alert("Please enter a city.");
+    };
+
+    forecast_url = forecast_url_base + "&q=" + city_value + "&cnt=5"
+    console.log(city_value,forecast_url);
+    
+    get_weather_data(forecast_url,process_weather_data);
+}
+
+function on_click()
+{
+celsius = !celsius;
+get_inputs_then_fetch();
+}
+</script>
+
+
+<body>
+
+</br>
+</br>
+
+<input id="city" placeholder="Type a City Name">
+<button type="button" onclick="get_inputs_then_fetch()">Fetch</button>
+
+<!-- <h1>Results</h1> -->
+
+<div id="results_div"></div>
+
+</body>
+
+
+
+<body onload="init();">
+
+<canvas id="weather_canvas" width="1000" height="600"></canvas>
+
+<!-- <h2>A Visual Weather App</h2>
+<ul>
+<li>Bring over the js and html code from js4</li>
+<li>Note: This program will always default to 5 day forecast!
+<li>This time, when a user clicks "fetch", get_inputs/process will draw on the canvas instead of table</li>
+<li>Default to five days and draw a bar graph, one for each day, with the high and low values</li>
+<li>Once working, uncomment the canvas.addEventListener line, and add a mouse down function to be
+called</li>
+<li>On a mouse down event, convert the temp values from celsius to fahrenheit (and vice versa).</li>
+
+</ul> -->
+
+</body>
+</html>
