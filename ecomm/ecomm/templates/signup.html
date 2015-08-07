@@ -1,0 +1,18 @@
+<title>Signup</title>
+<div>
+<h1>SIGNup</h1>
+<form action="/register/" method="post">
+	<label>First Name:</label>
+	<input type='text' name='first_name'><br>
+	<label>Last Name:</label>
+	<input type='text' name='last_name'><br>
+	<label>Email:</label>
+	<input type='text' name='email'><br>
+	<label>Username:</label>
+	<input type='text' name='username'><br>
+	<label>Password:</label>
+	<input type='password' name='password'><br>
+	{% csrf_token %}
+	<button type='submit'>Create</button>
+</form>
+</div>
